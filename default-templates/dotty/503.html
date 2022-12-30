@@ -1,0 +1,27 @@
+{{tpl:extends parent="__layout.html"}}
+
+<tpl:Block name="head-title">
+	<title>{{tpl:ConstructionTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}</title>
+</tpl:Block>
+
+<tpl:Block name="meta-robots">
+	<meta name="ROBOTS" content="{{tpl:BlogMetaRobots robots="NOINDEX,NOARCHIVE"}}" />
+</tpl:Block>
+
+<tpl:Block name="dc-entry">
+	<meta property="dc.title" lang="{{tpl:BlogLanguage}}" content="{{tpl:ConstructionTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}" />
+	<meta property="dc.language" content="{{tpl:BlogLanguage}}" />
+</tpl:Block>
+
+<tpl:Block name="head-linkrel">
+	<link rel="top" href="{{tpl:BlogURL}}" title="{{tpl:lang Home}}" />
+</tpl:Block>
+
+<tpl:Block name="body-tag"><body class="dc-503"></tpl:Block>
+
+<tpl:Block name="main-content">
+  <div id="content-info">
+    <h2>{{tpl:ConstructionTitle}}</h2>
+    {{tpl:ConstructionMessage}}
+  </div>
+</tpl:Block>

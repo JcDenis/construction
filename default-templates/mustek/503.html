@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="{{tpl:BlogLanguage}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="ROBOTS" content="{{tpl:BlogMetaRobots robots="NOINDEX,NOARCHIVE"}}" />
+
+  <title>{{tpl:ConstructionTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}</title>
+  <meta name="copyright" content="{{tpl:BlogCopyrightNotice encode_html="1"}}" />
+  <meta name="author" content="{{tpl:BlogEditor encode_html="1"}}" />
+
+  <link rel="schema.dc" href="http://purl.org/dc/elements/1.1/" />
+  <meta property="dc.title" lang="{{tpl:BlogLanguage}}" content="{{tpl:ConstructionTitle encode_html="1"}} - {{tpl:BlogName encode_html="1"}}" />
+  <meta property="dc.language" content="{{tpl:BlogLanguage}}" />
+  <meta property="dc.publisher" content="{{tpl:BlogEditor encode_html="1"}}" />
+  <meta property="dc.rights" content="{{tpl:BlogCopyrightNotice encode_html="1"}}" />
+  <meta property="dc.type" content="text" />
+  <meta property="dc.format" content="text/html" />
+
+  <link rel="top" href="{{tpl:BlogURL}}" title="{{tpl:lang Home}}" />
+
+  {{tpl:include src="_head.html"}}
+</head>
+
+<body class="dc-503">
+<div id="page">
+{{tpl:include src="_top.html"}}
+
+<div id="wrapper">
+
+<div id="main" role="main">
+  <div id="content">
+
+  <div id="content-info">
+    <h2>{{tpl:ConstructionTitle}}</h2>
+    {{tpl:ConstructionMessage}}
+  </div>
+
+  </div>
+</div>
+
+<div id="sidebar" role="complementary">
+  <div id="blognav">
+    {{tpl:Widgets type="nav"}}
+  </div> <!-- End #blognav -->
+
+  <div id="blogextra">
+    {{tpl:Widgets type="extra"}}
+  </div> <!-- End #blogextra -->
+</div>
+
+</div> <!-- End #wrapper -->
+
+{{tpl:include src="_footer.html"}}
+</div> <!-- End #page -->
+</body>
+</html>
