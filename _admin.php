@@ -1,47 +1,41 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of construction, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2010 Osku and contributors
-#
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-if (!defined('DC_CONTEXT_ADMIN')) { return; }
-
-dcCore::app()->blog->settings->addNamespace('construction');
-$menu_class = '';
-
-if (dcCore::app()->blog->settings->construction->construction_flag)
-{
-	dcCore::app()->addBehavior('adminPageHTMLHead','constructionadminPageHTMLHead');
-	$menu_class = 'construction-blog';
+/**
+ * @brief construction, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Osku and contributors
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_CONTEXT_ADMIN')) {
+    return null;
 }
 
-$_menu['Blog']->addItem(__('Construction'),
-	'plugin.php?p=construction','index.php?pf=construction/icon.png',
-	preg_match('/plugin.php\?p=construction(&.*)?$/',$_SERVER['REQUEST_URI']),
-	dcCore::app()->auth->check('admin',dcCore::app()->blog->id),
-	$menu_class
+dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
+    __('Construction'),
+    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+    urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_ADMIN]), dcCore::app()->blog->id),
+    dcCore::app()->blog->settings->get(basename(__DIR__))->get('flag') ? 'construction-blog' : ''
 );
 
-function constructionadminPageHTMLHead()
-{
-	echo '<style type="text/css">'."\n".'@import "index.php?pf=construction/css/admin.css";'."\n".'</style>'."\n";
-}
-
-dcCore::app()->addBehavior('adminDashboardFavorites','constructionDashboardFavorites');
-
-function constructionDashboardFavorites($core,$favs)
-{
-	$favs->register('construction', array(
-		'title' => __('Construction'),
-		'url' => 'plugin.php?p=construction',
-		'small-icon' => 'index.php?pf=construction/icon.png',
-		'large-icon' => 'index.php?pf=construction/icon-big.png',
-		'permissions' => 'usage,contentadmin'
-	));
-}
+dcCore::app()->addBehaviors([
+    'adminPageHTMLHead'         => function () {
+        if (dcCore::app()->blog->settings->get(basename(__DIR__))->get('flag')) {
+            echo dcPage::cssModuleLoad(basename(__DIR__) . '/css/admin.css');
+        }
+    },
+    'adminDashboardFavoritesV2' => function (dcFavorites $favs) {
+        $favs->register(basename(__DIR__), [
+            'title'       => __('Construction'),
+            'url'         => dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+            'small-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
+            'large-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon-big.png')),
+            'permissions' => dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_ADMIN]),
+        ]);
+    },
+]);

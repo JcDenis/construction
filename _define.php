@@ -1,29 +1,33 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of construction, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2010 Osku and contributors
-#
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-if (!defined('DC_RC_PATH')) { return; }
+/**
+ * @brief construction, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Osku and contributors
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_RC_PATH')) {
+    return;
+}
 
 $this->registerModule(
-	/* Name */		"Construction",
-	/* Description*/	"Place your blog maintenance",
-	/* Author */		"Osku and contributors",
-	/* Version */		'1.4',
-	/* Properties */
-	array(
-		'permissions' => 'admin',
-		'priority' =>		2000,
-		'type' => 'plugin',
-		'dc_min' => '2.24',
-		'support' => 'http://forum.dotclear.org/viewtopic.php?id=42875',
-		'details' => 'http://plugins.dotaddict.org/dc2/details/construction'
-		)
+    'Construction',
+    'Place your blog maintenance',
+    'Osku and contributors',
+    '1.5',
+    [
+        'requires'    => [['core', '2.24']],
+        'permissions' => dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_ADMIN,
+        ]),
+        'priority'    => 2000,
+        'type'        => 'plugin',
+        'support'     => 'http://forum.dotclear.org/viewtopic.php?id=42875',
+        'details'     => 'https://plugins.dotaddict.org/dc2/details/' . basename(__DIR__),
+        'repository'  => 'https://raw.githubusercontent.com/JcDenis/' . basename(__DIR__) . '/master/dcstore.xml',
+    ]
 );

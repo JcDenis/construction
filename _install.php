@@ -1,67 +1,78 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-#
-# This file is part of construction, a plugin for Dotclear 2.
-# 
-# Copyright (c) 2010 Osku and contributors
-#
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-#
-# -- END LICENSE BLOCK ------------------------------------
-if (!defined('DC_CONTEXT_ADMIN')) { exit; }
- 
-$new_version = dcCore::app()->plugins->moduleInfo('construction','version');
-
-$current_version = dcCore::app()->getVersion('construction');
-
-if (version_compare($current_version,$new_version,'>=')) {
-	return;
+/**
+ * @brief construction, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugin
+ *
+ * @author Osku and contributors
+ *
+ * @copyright Jean-Christian Denis
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
+if (!defined('DC_CONTEXT_ADMIN')) {
+    return null;
 }
 
-dcCore::app()->blog->settings->addNamespace('construction');
-$s =& dcCore::app()->blog->settings->construction;
+try {
+    // Version
+    if (!dcCore::app()->newVersion(
+        basename(__DIR__),
+        dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version')
+    )) {
+        return null;
+    }
 
-$s->put('construction_flag',
-	false,
-	'boolean',
-	'Construction blog flag',
-	true,
-	true
-);
+    $s = dcCore::app()->blog->settings->get(basename(__DIR__));
 
-$s->put('construction_allowed_ip',
-	serialize(array('127.0.0.1')),
-	'string',
-	'Construction blog allowed ip',
-	true,
-	true
-);
+    $s->put(
+        'flag',
+        false,
+        'boolean',
+        'Construction blog flag',
+        false,
+        true
+    );
 
-$s->put('construction_title',
-	__('Work in progress'),
-	'string',
-	'Construction blog title',
-	true,
-	true
-);
+    $s->put(
+        'allowed_ip',
+        json_encode(['127.0.0.1']),
+        'string',
+        'Construction blog allowed ip',
+        false,
+        true
+    );
 
-$s->put('construction_message',
-	__('<p>The blog is currently under construction.</p>'),
-	'string',
-	'Construction blog message',
-	true,
-	true
-);
+    $s->put(
+        'title',
+        __('Work in progress'),
+        'string',
+        'Construction blog title',
+        false,
+        true
+    );
 
-$s->put('construction_extra_urls',
-	serialize(array()),
-	'string',
-	'Construction blog message',
-	true,
-	true
-);
+    $s->put(
+        'message',
+        __('<p>The blog is currently under construction.</p>'),
+        'string',
+        'Construction blog message',
+        false,
+        true
+    );
 
-dcCore::app()->setVersion('construction',$new_version);
-return true;
+    $s->put(
+        'extra_urls',
+        json_encode([]),
+        'string',
+        'Construction blog message',
+        false,
+        true
+    );
+
+    return true;
+} catch (Exception $e) {
+    dcCore::app()->error->add($e->getMessage());
+}
+
+return false;
