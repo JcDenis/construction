@@ -1,3 +1,10 @@
+todo
+* disable widgets
+
+1.6 - 2023.04.10
+* require dotclear 2.26
+* use namespace
+
 1.5 - 2022.12.31
 * update to dotclear 2.24
 * use json intead of serialize
