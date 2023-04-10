@@ -10,32 +10,61 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return null;
-}
+declare(strict_types=1);
 
-dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
-    __('Construction'),
-    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
-    urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
-    preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
-    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_ADMIN]), dcCore::app()->blog->id),
-    dcCore::app()->blog->settings->get(basename(__DIR__))->get('flag') ? 'construction-blog' : ''
-);
+namespace Dotclear\Plugin\construction;
 
-dcCore::app()->addBehaviors([
-    'adminPageHTMLHead'         => function () {
-        if (dcCore::app()->blog->settings->get(basename(__DIR__))->get('flag')) {
-            echo dcPage::cssModuleLoad(basename(__DIR__) . '/css/admin.css');
+use dcAdmin;
+use dcCore;
+use dcPage;
+use dcFavorites;
+use dcNsProcess;
+
+class Backend extends dcNsProcess
+{
+    public static function init(): bool
+    {
+        static::$init = defined('DC_CONTEXT_ADMIN')
+            && My::phpCompliant()
+            && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+                dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
+            ]), dcCore::app()->blog->id);
+
+        return static::$init;
+    }
+
+    public static function process(): bool
+    {
+        if (!static::$init) {
+            return false;
         }
-    },
-    'adminDashboardFavoritesV2' => function (dcFavorites $favs) {
-        $favs->register(basename(__DIR__), [
-            'title'       => __('Construction'),
-            'url'         => dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
-            'small-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon.png')),
-            'large-icon'  => urldecode(dcPage::getPF(basename(__DIR__) . '/icon-big.png')),
-            'permissions' => dcCore::app()->auth->makePermissions([dcAuth::PERMISSION_ADMIN]),
+
+        dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
+            My::name(),
+            dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+            dcPage::getPF(My::id() . '/icon.png'),
+            preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
+            dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_ADMIN]), dcCore::app()->blog->id),
+            dcCore::app()->blog->settings->get(My::id())->get('flag') ? 'construction-blog' : ''
+        );
+
+        dcCore::app()->addBehaviors([
+            'adminPageHTMLHead' => function (): void {
+                if (dcCore::app()->blog->settings->get(My::id())->get('flag')) {
+                    echo dcPage::cssModuleLoad(My::id() . '/css/backend.css');
+                }
+            },
+            'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
+                $favs->register(My::id(), [
+                    'title'       => My::name(),
+                    'url'         => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
+                    'small-icon'  => dcPage::getPF(My::id() . '/icon.png'),
+                    'large-icon'  => dcPage::getPF(My::id() . '/icon-big.png'),
+                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_ADMIN]),
+                ]);
+            },
         ]);
-    },
-]);
+
+        return true;
+    }
+}

@@ -10,106 +10,152 @@
  * @copyright Jean-Christian Denis
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return null;
-}
+declare(strict_types=1);
 
-dcPage::check(dcCore::app()->auth->makePermissions([
-    dcAuth::PERMISSION_ADMIN,
-]));
+namespace Dotclear\Plugin\construction;
 
-$s = dcCore::app()->blog->settings->get(basename(__DIR__));
+use dcAuth;
+use dcCore;
+use dcNsProcess;
+use dcPage;
+use Dotclear\Helper\Html\Form\{
+    Checkbox,
+    Div,
+    Form,
+    Hidden,
+    Input,
+    Label,
+    Note,
+    Para,
+    Submit,
+    Text,
+    Textarea
+};
+use Dotclear\Helper\Html\Html;
+use Dotclear\Helper\Network\Http;
+use Exception;
 
-if (!empty($_POST['saveconfig'])) {
-    try {
-        $allowed_ip = [];
-        foreach (explode("\n", $_POST['construction_allowed_ip']) as $ip) {
-            $allowed_ip[] = trim($ip);
+class Manage extends dcNsProcess
+{
+    public static function init(): bool
+    {
+        static::$init = defined('DC_CONTEXT_ADMIN')
+            && My::phpCompliant()
+            && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+                dcAuth::PERMISSION_CONTENT_ADMIN,
+            ]), dcCore::app()->blog->id);
+
+        return static::$init;
+    }
+
+    public static function process(): bool
+    {
+        if (!static::$init) {
+            return false;
         }
-        $extra_urls = [];
-        foreach (explode(',', $_POST['construction_extra_urls']) as $url) {
-            $extra_urls[] = trim($url);
+
+        $s = dcCore::app()->blog->settings->get(My::id());
+
+        if (!empty($_POST['saveconfig'])) {
+            try {
+                $allowed_ip = [];
+                foreach (explode("\n", $_POST['construction_allowed_ip']) as $ip) {
+                    $allowed_ip[] = trim($ip);
+                }
+                $extra_urls = [];
+                foreach (explode(',', $_POST['construction_extra_urls']) as $url) {
+                    $extra_urls[] = trim($url);
+                }
+
+                $s->put('flag', !empty($_POST['construction_flag']));
+                $s->put('allowed_ip', json_encode($allowed_ip));
+                $s->put('title', $_POST['construction_title']);
+                $s->put('message', $_POST['construction_message']);
+                $s->put('extra_urls', json_encode($extra_urls));
+
+                dcCore::app()->blog->triggerBlog();
+
+                dcPage::addSuccessNotice(
+                    __('Settings successfully updated.')
+                );
+
+                dcCore::app()->adminurl->redirect(
+                    'admin.plugin.' . My::id()
+                );
+            } catch (Exception $e) {
+                dcCore::app()->error->add($e->getMessage());
+            }
         }
 
-        $s->put('flag', empty($_POST['construction_flag']) ? false : true);
-        $s->put('allowed_ip', json_encode($allowed_ip));
-        $s->put('title', $_POST['construction_title']);
-        $s->put('message', $_POST['construction_message']);
-        $s->put('extra_urls', json_encode($extra_urls));
+        return true;
+    }
 
-        dcCore::app()->blog->triggerBlog();
+    public static function render(): void
+    {
+        if (!static::$init) {
+            return;
+        }
 
-        dcAdminNotices::addSuccessNotice(
-            __('Settings successfully updated.')
+        $s       = dcCore::app()->blog->settings->get(My::id());
+        $editor  = dcCore::app()->auth->getOption('editor');
+        $nb_rows = count(json_decode($s->get('allowed_ip'), true));
+        if ($nb_rows < 2) {
+            $nb_rows = 2;
+        } elseif ($nb_rows > 10) {
+            $nb_rows = 10;
+        }
+
+        dcPage::openModule(
+            My::name(),
+            dcPage::jsConfirmClose('opts-forms') .
+            dcCore::app()->callBehavior('adminPostEditor', $editor['xhtml'], 'construction', ['#construction_message'], 'xhtml') .
+            dcPage::jsModuleLoad(My::id() . '/js/backend.js')
         );
 
-        dcCore::app()->adminurl->redirect(
-            'admin.plugin.' . basename(__DIR__)
-        );
-    } catch (Exception $e) {
-        dcCore::app()->error->add($e->getMessage());
+        echo
+        dcPage::breadcrumb([
+            __('Plugins') => '',
+            My::name()    => '',
+        ]) .
+        dcPage::notices() .
+
+        (new Div())->id('construction_options')->items([
+            (new Form(My::id() . 'form'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->fields([
+                (new Div())->class('fieldset')->items([
+                    (new Text('h4', __('Configuration'))),
+                    (new Para())->class('filed')->items([
+                        (new Checkbox('construction_flag', (bool) $s->get('flag')))->value(1),
+                        (new Label(__('Plugin activation'), Label::OUTSIDE_LABEL_AFTER))->for('construction_flag')->class('classic'),
+                    ]),
+                    (new Para())->items([
+                        (new Label(__('Allowed IP:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_allowed_ip'),
+                        (new Textarea('construction_allowed_ip', Html::escapeHTML(implode("\n", json_decode($s->get('allowed_ip'), true)))))->cols(20)->rows($nb_rows),
+                    ]),
+                    (new Note())->class('form-note')->text(sprintf(__('Your IP is <strong>%s</strong> - the allowed IP can view the blog normally.'), (string) Http::realIP())),
+                    (new Para())->class('area')->items([
+                        (new Label(__('Extra allowed URL types:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_extra_urls'),
+                        (new Input('construction_extra_urls'))->size(20)->maxlenght(255)->class('maximal')->value(Html::escapeHTML(implode(',', json_decode($s->get('extra_urls'), true)))),
+                    ]),
+                ]),
+                (new Div())->class('fieldset')->items([
+                    (new Text('h4', __('Presentation'))),
+                    (new Para())->class('area')->items([
+                        (new Label(__('Title:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_title'),
+                        (new Input('construction_title'))->size(20)->maxlenght(255)->class('maximal')->value(Html::escapeHTML($s->get('title'))),
+                    ]),
+                    (new Para())->class('area')->items([
+                        (new Label(__('Message:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_message'),
+                        (new Textarea('construction_message', Html::escapeHTML($s->get('message'))))->cols(40)->rows(10),
+                    ]),
+                ]),
+                (new Para())->items([
+                    dcCore::app()->formNonce(false),
+                    (new Hidden(['p'], 'construction')),
+                    (new Submit(['saveconfig']))->value(__('Save')),
+                ]),
+            ]),
+        ])->render();
+
+        dcPage::closeModule();
     }
 }
-
-$nb_rows = count(json_decode($s->get('allowed_ip'), true));
-if ($nb_rows < 2) {
-    $nb_rows = 2;
-} elseif ($nb_rows > 10) {
-    $nb_rows = 10;
-}
-
-$editor = dcCore::app()->auth->getOption('editor');
-
-echo '
-<html><head><title>' . __('Construction') . '</title>' .
-dcPage::jsConfirmClose('opts-forms') .
-dcCore::app()->callBehavior('adminPostEditor', $editor['xhtml'], 'construction', ['#construction_message'], 'xhtml') .
-dcPage::jsModuleLoad(basename(__DIR__) . '/js/index.js') . '
-</head><body>' .
-
-dcPage::breadcrumb([
-    __('Plugins')      => '',
-    __('Construction') => '',
-]) .
-dcPage::notices() . '
-
-<div id="construction_options">
-<form method="post" action="' . dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)) . '">
-<div class="fieldset">
-<h4>' . __('Configuration') . '</h4>
-
-<p class="field">' .
-form::checkbox('construction_flag', 1, $s->get('flag')) . '
-<label class="classic" for="construction_flag">' . __('Plugin activation') . '</label>
-</p>
-
-<p><label for="construction_allowed_ip">' . __('Allowed IP:') . '</label> ' .
-form::textarea('construction_allowed_ip', 20, $nb_rows, html::escapeHTML(implode("\n", json_decode($s->get('allowed_ip'), true)))) .
-'</p>
-<p class="form-note">' . sprintf(__('Your IP is <strong>%s</strong> - the allowed IP can view the blog normally.'), (string) http::realIP()) . '</p>
-
-<p class="area"><label for="construction_extra_urls">' . __('Extra allowed URL types:') . '</label>' .
-form::field('construction_extra_urls', 20, 255, html::escapeHTML(implode(',', json_decode($s->get('extra_urls'), true))), 'maximal') .
-'</p>
-
-</div>
-<div class="fieldset">
-<h4>' . __('Presentation') . '</h4>
-<p class="area"><label for="construction_title">' . __('Title:') . '</label>' .
-form::field('construction_title', 20, 255, html::escapeHTML($s->get('title')), 'maximal') .
-'</p>
-
-<p class="area"><label for="construction_message">' . __('Message:') . '</label>' .
-form::textarea('construction_message', 40, 10, html::escapeHTML($s->get('message'))) .
-'</p>
-</div>
-<p>' .
-form::hidden(['p'], 'construction') .
-dcCore::app()->formNonce() . '
-<input type="submit" name="saveconfig" value="' . __('Save') . '" />
-</p>
-</form>
-</div>
-
-</body>
-</html>';
