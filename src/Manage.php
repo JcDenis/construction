@@ -41,6 +41,7 @@ class Manage extends dcNsProcess
     {
         static::$init = defined('DC_CONTEXT_ADMIN')
             && My::phpCompliant()
+            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe PHP < 8.0
             && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
                 dcAuth::PERMISSION_CONTENT_ADMIN,
             ]), dcCore::app()->blog->id);
@@ -51,6 +52,11 @@ class Manage extends dcNsProcess
     public static function process(): bool
     {
         if (!static::$init) {
+            return false;
+        }
+
+        // nullsafe PHP < 8.0
+        if (is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return false;
         }
 
@@ -93,6 +99,11 @@ class Manage extends dcNsProcess
     public static function render(): void
     {
         if (!static::$init) {
+            return;
+        }
+
+        // nullsafe PHP < 8.0
+        if (is_null(dcCore::app()->auth) || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return;
         }
 

@@ -26,6 +26,7 @@ class Backend extends dcNsProcess
     {
         static::$init = defined('DC_CONTEXT_ADMIN')
             && My::phpCompliant()
+            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe PHP < 8.0
             && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
                 dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
             ]), dcCore::app()->blog->id);
@@ -36,6 +37,11 @@ class Backend extends dcNsProcess
     public static function process(): bool
     {
         if (!static::$init) {
+            return false;
+        }
+
+        // nullsafe PHP < 8.0
+        if (is_null(dcCore::app()->auth) || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
             return false;
         }
 
@@ -50,11 +56,19 @@ class Backend extends dcNsProcess
 
         dcCore::app()->addBehaviors([
             'adminPageHTMLHead' => function (): void {
+                // nullsafe PHP < 8.0
+                if (is_null(dcCore::app()->blog)) {
+                    return;
+                }
                 if (dcCore::app()->blog->settings->get(My::id())->get('flag')) {
                     echo dcPage::cssModuleLoad(My::id() . '/css/backend.css');
                 }
             },
             'adminDashboardFavoritesV2' => function (dcFavorites $favs): void {
+                // nullsafe PHP < 8.0
+                if (is_null(dcCore::app()->auth) || is_null(dcCore::app()->adminurl)) {
+                    return;
+                }
                 $favs->register(My::id(), [
                     'title'       => My::name(),
                     'url'         => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
