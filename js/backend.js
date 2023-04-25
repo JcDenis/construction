@@ -3,9 +3,9 @@
 
 $(() => {
   if (typeof jsToolBar === 'function') {
-    $('#disclaimer_text').each(function () {
+    $('#construction_message').each(function () {
       const tbWidgetTextDisclaimer = new jsToolBar(this);
-      tbWidgetTextDisclaimer.context = 'disclaimer_text';
+      tbWidgetTextDisclaimer.context = 'construction_message';
       tbWidgetTextDisclaimer.draw('xhtml');
     });
   }
