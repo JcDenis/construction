@@ -46,10 +46,10 @@ class Frontend extends dcNsProcess
             }
 
             $tplset = dcCore::app()->themes->moduleInfo(dcCore::app()->blog->settings->get('system')->get('theme'), 'tplset');
-            if (!empty($tplset) && is_dir(implode(DIRECTORY_SEPARATOR, [My::root(), 'default-templates', $tplset]))) {
-                dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), implode(DIRECTORY_SEPARATOR, [My::root(), 'default-templates', $tplset]));
+            if (!empty($tplset) && is_dir(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]))) {
+                dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]));
             } else {
-                dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), implode(DIRECTORY_SEPARATOR, [My::root(), 'default-templates', DC_DEFAULT_TPLSET]));
+                dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', DC_DEFAULT_TPLSET]));
             }
 
             $all_allowed_ip = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowed_ip'), true);
