@@ -40,7 +40,6 @@ class Manage extends dcNsProcess
     public static function init(): bool
     {
         static::$init = defined('DC_CONTEXT_ADMIN')
-            && My::phpCompliant()
             && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe PHP < 8.0
             && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
                 dcAuth::PERMISSION_CONTENT_ADMIN,
