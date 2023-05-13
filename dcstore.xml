@@ -2,10 +2,10 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="construction">
     <name>Construction</name>
-    <version>1.6</version>
+    <version>1.7</version>
     <author>Osku and contributors</author>
     <desc>Place your blog maintenance</desc>
-    <file>https://github.com/JcDenis/construction/releases/download/v1.6/plugin-construction.zip</file>
+    <file>https://github.com/JcDenis/construction/releases/download/v1.7/plugin-construction.zip</file>
     <da:dcmin>2.26</da:dcmin>
     <da:details>https://plugins.dotaddict.org/dc2/details/construction</da:details>
     <da:support>http://forum.dotclear.org/viewtopic.php?id=42875</da:support>

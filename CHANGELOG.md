@@ -1,6 +1,12 @@
 todo
 * disable widgets
 
+1.7 - 2023.05.13
+* require dotclear 2.26
+* fix editor ID
+* fix nullsafe warnings
+* add plugin Unnistaller features
+
 1.6 - 2023.04.10
 * require dotclear 2.26
 * use namespace
