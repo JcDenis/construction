@@ -47,7 +47,7 @@ class Backend extends dcNsProcess
         dcCore::app()->menu[dcAdmin::MENU_PLUGINS]->addItem(
             My::name(),
             dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
-            dcPage::getPF(My::id() . '/icon.png'),
+            dcPage::getPF(My::id() . '/icon.svg'),
             preg_match('/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . My::id())) . '(&.*)?$/', $_SERVER['REQUEST_URI']),
             dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_ADMIN]), dcCore::app()->blog->id),
             dcCore::app()->blog->settings->get(My::id())->get('flag') ? 'construction-blog' : ''
@@ -71,8 +71,8 @@ class Backend extends dcNsProcess
                 $favs->register(My::id(), [
                     'title'       => My::name(),
                     'url'         => dcCore::app()->adminurl->get('admin.plugin.' . My::id()),
-                    'small-icon'  => dcPage::getPF(My::id() . '/icon.png'),
-                    'large-icon'  => dcPage::getPF(My::id() . '/icon-big.png'),
+                    'small-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
+                    'large-icon'  => dcPage::getPF(My::id() . '/icon.svg'),
                     'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_ADMIN]),
                 ]);
             },
