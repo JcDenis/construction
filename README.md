@@ -1,10 +1,9 @@
 # README
 
-[![Release](https://img.shields.io/github/v/release/JcDenis/construction)](https://git.dotclear.watch/JcDenis/construction/releases)
-[![Date](https://img.shields.io/github/release-date/JcDenis/construction)](https://git.dotclear.watch/JcDenis/construction/releases)
-[![Issues](https://img.shields.io/github/issues/JcDenis/construction)](https://git.dotclear.watch/JcDenis/construction/issues)
-[![Dotclear](https://img.shields.io/badge/dotclear-v2.27-blue.svg)](https://fr.dotclear.org/download)
-[![Dotaddict](https://img.shields.io/badge/dotaddict-official-green.svg)](https://plugins.dotaddict.org/dc2/details/construction)
+[![Release](https://img.shields.io/badge/release-1.8-a2cbe9.svg)](https://git.dotclear.watch/JcDenis/construction/releases)
+[![Date](https://img.shields.io/badge/date-2023.08.06-c44d58.svg)](https://git.dotclear.watch/JcDenis/construction/releases)
+[![Dotclear](https://img.shields.io/badge/dotclear-v2.27-137bbb.svg)](https://fr.dotclear.org/download)
+[![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/construction)
 [![License](https://img.shields.io/github/license/JcDenis/construction)](https://git.dotclear.watch/JcDenis/construction/blob/master/LICENSE)
 
 ## WHAT IS  DISCLAIMER ?
