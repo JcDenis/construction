@@ -15,32 +15,24 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\construction;
 
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 use Exception;
 
-class Install extends dcNsProcess
+class Install extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN')
-            && dcCore::app()->newVersion(My::id(), dcCore::app()->plugins->moduleInfo(My::id(), 'version'));
-
-        return static::$init;
+        return self::status(My::checkContext(My::INSTALL));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
-            return false;
-        }
-
-        // nullsafe PHP < 8.0
-        if (is_null(dcCore::app()->blog)) {
+        if (!self::status()) {
             return false;
         }
 
         try {
-            $s = dcCore::app()->blog->settings->get(My::id());
+            $s = My::settings();
 
             $s->put(
                 'flag',

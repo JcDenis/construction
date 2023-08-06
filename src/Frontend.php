@@ -16,32 +16,30 @@ namespace Dotclear\Plugin\construction;
 
 use ArrayObject;
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 use Dotclear\Helper\Network\Http;
 use Exception;
 
-class Frontend extends dcNsProcess
+class Frontend extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_RC_PATH');
-
-        return static::$init;
+        return self::status(My::checkContext(My::FRONTEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
-        dcCore::app()->addBehavior('publicBeforeDocument', function (): void {
+        dcCore::app()->addBehavior('publicBeforeDocumentV2', function (): void {
             // nullsafe PHP < 8.0
             if (is_null(dcCore::app()->blog)) {
                 return;
             }
 
-            if (!dcCore::app()->blog->settings->get(My::id())->get('flag')) {
+            if (!My::settings()->get('flag')) {
                 return;
             }
 
@@ -52,11 +50,11 @@ class Frontend extends dcNsProcess
                 dcCore::app()->tpl->setPath(dcCore::app()->tpl->getPath(), implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', DC_DEFAULT_TPLSET]));
             }
 
-            $all_allowed_ip = json_decode(dcCore::app()->blog->settings->get(My::id())->get('allowed_ip'), true);
+            $all_allowed_ip = json_decode((string) My::settings()->get('allowed_ip'), true);
             if (!is_array($all_allowed_ip)) {
                 $all_allowed_ip = [];
             }
-            $extra_urls = json_decode(dcCore::app()->blog->settings->get(My::id())->get('extra_urls'), true);
+            $extra_urls = json_decode((string) My::settings()->get('extra_urls'), true);
             if (!in_array(Http::realIP(), $all_allowed_ip)) {
                 dcCore::app()->url->registerDefault(function (?string $args): void {
                     dcCore::app()->url->type = 'default';
@@ -77,7 +75,7 @@ class Frontend extends dcNsProcess
 
                     echo dcCore::app()->tpl->getData(dcCore::app()->ctx->__get('current_tpl'));
 
-                    # --BEHAVIOR-- publicAfterDocument
+                    # --BEHAVIOR-- publicAfterDocumentV2
                     dcCore::app()->callBehavior('publicAfterDocumentV2');
                     exit;
                 });

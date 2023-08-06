@@ -14,10 +14,12 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\construction;
 
-use dcAuth;
 use dcCore;
-use dcNsProcess;
-use dcPage;
+use Dotclear\Core\Process;
+use Dotclear\Core\Backend\{
+    Notices,
+    Page
+};
 use Dotclear\Helper\Html\Form\{
     Checkbox,
     Div,
@@ -35,31 +37,25 @@ use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Network\Http;
 use Exception;
 
-class Manage extends dcNsProcess
+class Manage extends Process
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN')
-            && !is_null(dcCore::app()->auth) && !is_null(dcCore::app()->blog) // nullsafe PHP < 8.0
-            && dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-                dcAuth::PERMISSION_CONTENT_ADMIN,
-            ]), dcCore::app()->blog->id);
-
-        return static::$init;
+        return self::status(My::checkContext(My::MANAGE));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
         // nullsafe PHP < 8.0
-        if (is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
+        if (is_null(dcCore::app()->blog)) {
             return false;
         }
 
-        $s = dcCore::app()->blog->settings->get(My::id());
+        $s = My::settings();
 
         if (!empty($_POST['saveconfig'])) {
             try {
@@ -80,13 +76,11 @@ class Manage extends dcNsProcess
 
                 dcCore::app()->blog->triggerBlog();
 
-                dcPage::addSuccessNotice(
+                Notices::addSuccessNotice(
                     __('Settings successfully updated.')
                 );
 
-                dcCore::app()->adminurl->redirect(
-                    'admin.plugin.' . My::id()
-                );
+                My::redirect();
             } catch (Exception $e) {
                 dcCore::app()->error->add($e->getMessage());
             }
@@ -97,16 +91,16 @@ class Manage extends dcNsProcess
 
     public static function render(): void
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return;
         }
 
         // nullsafe PHP < 8.0
-        if (is_null(dcCore::app()->auth) || is_null(dcCore::app()->blog) || is_null(dcCore::app()->adminurl)) {
+        if (is_null(dcCore::app()->blog)) {
             return;
         }
 
-        $s       = dcCore::app()->blog->settings->get(My::id());
+        $s       = My::settings();
         $editor  = dcCore::app()->auth->getOption('editor');
         $nb_rows = count(json_decode($s->get('allowed_ip'), true));
         if ($nb_rows < 2) {
@@ -115,22 +109,22 @@ class Manage extends dcNsProcess
             $nb_rows = 10;
         }
 
-        dcPage::openModule(
+        Page::openModule(
             My::name(),
-            dcPage::jsConfirmClose('opts-forms') .
+            Page::jsConfirmClose('opts-forms') .
             dcCore::app()->callBehavior('adminPostEditor', $editor['xhtml'], 'construction', ['#construction_message'], 'xhtml') .
-            dcPage::jsModuleLoad(My::id() . '/js/backend.js')
+            Page::jsLoad('backend')
         );
 
         echo
-        dcPage::breadcrumb([
+        Page::breadcrumb([
             __('Plugins') => '',
             My::name()    => '',
         ]) .
-        dcPage::notices() .
+        Notices::getNotices() .
 
         (new Div())->id('construction_options')->items([
-            (new Form(My::id() . 'form'))->method('post')->action(dcCore::app()->adminurl->get('admin.plugin.' . My::id()))->fields([
+            (new Form(My::id() . 'form'))->method('post')->action(My::manageUrl())->fields([
                 (new Div())->class('fieldset')->items([
                     (new Text('h4', __('Configuration'))),
                     (new Para())->class('filed')->items([
@@ -159,13 +153,12 @@ class Manage extends dcNsProcess
                     ]),
                 ]),
                 (new Para())->items([
-                    dcCore::app()->formNonce(false),
-                    (new Hidden(['p'], 'construction')),
                     (new Submit(['saveconfig']))->value(__('Save')),
+                    ... My::hiddenFields(),
                 ]),
             ]),
         ])->render();
 
-        dcPage::closeModule();
+        Page::closeModule();
     }
 }
