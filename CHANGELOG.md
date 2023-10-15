@@ -1,3 +1,9 @@
+construction 1.9 - 2023.10.15
+===========================================================
+* Require Dotclear 2.28
+* Require PHP 8.1
+* Upgrade to Dotclear 2.28
+
 construction 1.8 - 2023.08.06
 ===========================================================
 * Require Dotclear 2.27

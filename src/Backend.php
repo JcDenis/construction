@@ -1,26 +1,21 @@
 <?php
-/**
- * @brief construction, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Osku and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\construction;
 
-use dcCore;
-use Dotclear\Core\Backend\{
-    Favorites,
-    Menus
-};
+use Dotclear\App;
+use Dotclear\Core\Backend\Favorites;
 use Dotclear\Core\Process;
 
+/**
+ * @brief       construction backend class.
+ * @ingroup     construction
+ *
+ * @author      Osku (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Backend extends Process
 {
     public static function init(): bool
@@ -34,9 +29,9 @@ class Backend extends Process
             return false;
         }
 
-        My::addBackendMenuItem(Menus::MENU_PLUGINS, [], '(&.*)?$', My::settings()->get('flag') ? 'construction-blog' : '');
+        My::addBackendMenuItem(App::backend()->menus()::MENU_PLUGINS, [], '(&.*)?$', My::settings()->get('flag') ? 'construction-blog' : '');
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             'adminPageHTMLHead' => function (): void {
                 if (My::settings()->get('flag')) {
                     echo My::cssLoad('backend');
@@ -48,7 +43,7 @@ class Backend extends Process
                     'url'         => My::manageUrl(),
                     'small-icon'  => My::icons(),
                     'large-icon'  => My::icons(),
-                    'permissions' => dcCore::app()->auth->makePermissions([dcCore::app()->auth::PERMISSION_ADMIN]),
+                    'permissions' => App::auth()->makePermissions([App::auth()::PERMISSION_ADMIN]),
                 ]);
             },
         ]);

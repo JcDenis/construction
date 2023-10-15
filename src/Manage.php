@@ -1,20 +1,9 @@
 <?php
-/**
- * @brief construction, a plugin for Dotclear 2
- *
- * @package Dotclear
- * @subpackage Plugin
- *
- * @author Osku and contributors
- *
- * @copyright Jean-Christian Denis
- * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
- */
+
 declare(strict_types=1);
 
 namespace Dotclear\Plugin\construction;
 
-use dcCore;
 use Dotclear\Core\Process;
 use Dotclear\Core\Backend\{
     Notices,
@@ -37,6 +26,14 @@ use Dotclear\Helper\Html\Html;
 use Dotclear\Helper\Network\Http;
 use Exception;
 
+/**
+ * @brief       construction manage class.
+ * @ingroup     construction
+ *
+ * @author      Osku (author)
+ * @author      Jean-Christian Denis (latest)
+ * @copyright   GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 class Manage extends Process
 {
     public static function init(): bool
@@ -51,7 +48,7 @@ class Manage extends Process
         }
 
         // nullsafe PHP < 8.0
-        if (is_null(dcCore::app()->blog)) {
+        if (!App::blog()->isDefined()) {
             return false;
         }
 
@@ -74,7 +71,7 @@ class Manage extends Process
                 $s->put('message', $_POST['construction_message']);
                 $s->put('extra_urls', json_encode($extra_urls));
 
-                dcCore::app()->blog->triggerBlog();
+                App::blog()->triggerBlog();
 
                 Notices::addSuccessNotice(
                     __('Settings successfully updated.')
@@ -82,7 +79,7 @@ class Manage extends Process
 
                 My::redirect();
             } catch (Exception $e) {
-                dcCore::app()->error->add($e->getMessage());
+                App::error()->add($e->getMessage());
             }
         }
 
@@ -96,12 +93,12 @@ class Manage extends Process
         }
 
         // nullsafe PHP < 8.0
-        if (is_null(dcCore::app()->blog)) {
+        if (!App::blog()->isDefined()) {
             return;
         }
 
         $s       = My::settings();
-        $editor  = dcCore::app()->auth->getOption('editor');
+        $editor  = App::auth()->getOption('editor');
         $nb_rows = count(json_decode($s->get('allowed_ip'), true));
         if ($nb_rows < 2) {
             $nb_rows = 2;
@@ -112,7 +109,7 @@ class Manage extends Process
         Page::openModule(
             My::name(),
             Page::jsConfirmClose('opts-forms') .
-            dcCore::app()->callBehavior('adminPostEditor', $editor['xhtml'], 'construction', ['#construction_message'], 'xhtml') .
+            App::behavior()->callBehavior('adminPostEditor', $editor['xhtml'], 'construction', ['#construction_message'], 'xhtml') .
             Page::jsLoad('backend')
         );
 
