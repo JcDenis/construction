@@ -8,7 +8,7 @@
 
 ## ABOUT
 
-_dcLog_ is a plugin for the open-source web publishing software called [Dotclear](https://www.dotclear.org).
+_construction_ is a plugin for the open-source web publishing software called [Dotclear](https://www.dotclear.org).
 
 > Put your blog on construction mode with a custom message on frontend. Blog can be accessible to defined IP addresses.
 
