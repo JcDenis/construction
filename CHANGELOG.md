@@ -1,3 +1,10 @@
+construction 1.9.1 - 2023.10.23
+===========================================================
+* Require Dotclear 2.28
+* Require PHP 8.1
+* Fix a typo
+* Fix repository branch
+
 construction 1.9 - 2023.10.15
 ===========================================================
 * Require Dotclear 2.28
