@@ -136,14 +136,14 @@ class Manage extends Process
                     (new Note())->class('form-note')->text(sprintf(__('Your IP is <strong>%s</strong> - the allowed IP can view the blog normally.'), (string) Http::realIP())),
                     (new Para())->class('area')->items([
                         (new Label(__('Extra allowed URL types:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_extra_urls'),
-                        (new Input('construction_extra_urls'))->size(20)->maxlenght(255)->class('maximal')->value(Html::escapeHTML(implode(',', json_decode($s->get('extra_urls'), true)))),
+                        (new Input('construction_extra_urls'))->size(20)->maxlength(255)->class('maximal')->value(Html::escapeHTML(implode(',', json_decode($s->get('extra_urls'), true)))),
                     ]),
                 ]),
                 (new Div())->class('fieldset')->items([
                     (new Text('h4', __('Presentation'))),
                     (new Para())->class('area')->items([
                         (new Label(__('Title:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_title'),
-                        (new Input('construction_title'))->size(20)->maxlenght(255)->class('maximal')->value(Html::escapeHTML($s->get('title'))),
+                        (new Input('construction_title'))->size(20)->maxlength(255)->class('maximal')->value(Html::escapeHTML($s->get('title'))),
                     ]),
                     (new Para())->class('area')->items([
                         (new Label(__('Message:'), Label::OUTSIDE_LABEL_BEFORE))->for('construction_message'),
