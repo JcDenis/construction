@@ -29,7 +29,7 @@ class Backend extends Process
             return false;
         }
 
-        My::addBackendMenuItem(App::backend()->menus()::MENU_PLUGINS, [], '(&.*)?$', My::settings()->get('flag') ? 'construction-blog' : '');
+        My::addBackendMenuItem();
 
         App::behavior()->addBehaviors([
             'adminPageHTMLHead' => function (): void {

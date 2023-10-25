@@ -32,27 +32,24 @@ class Frontend extends Process
         }
 
         App::behavior()->addBehavior('publicBeforeDocumentV2', function (): void {
-            // nullsafe PHP < 8.0
-            if (!App::blog()->isDefined()) {
-                return;
-            }
-
             if (!My::settings()->get('flag')) {
                 return;
             }
 
-            $tplset = App::themes()->moduleInfo(App::blog()->settings()->get('system')->get('theme'), 'tplset');
-            if (!empty($tplset) && is_dir(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]))) {
-                App::frontend()->template()->setPath(App::frontend()->template()->getPath(), implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]));
-            } else {
-                App::frontend()->template()->setPath(App::frontend()->template()->getPath(), implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', App::config()->defaultTplset()]));
+            $tplset = App::themes()->getDefine(App::blog()->settings()->get('system')->get('theme'))->get('tplset');
+            if (empty($tplset) || !is_dir(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]))) {
+                $tplset = App::config()->defaultTplset();
             }
+            App::frontend()->template()->appendPath(implode(DIRECTORY_SEPARATOR, [My::path(), 'default-templates', $tplset]));
 
             $all_allowed_ip = json_decode((string) My::settings()->get('allowed_ip'), true);
             if (!is_array($all_allowed_ip)) {
                 $all_allowed_ip = [];
             }
             $extra_urls = json_decode((string) My::settings()->get('extra_urls'), true);
+            if (!is_array($extra_urls)) {
+                $extra_urls = [];
+            }
             if (!in_array(Http::realIP(), $all_allowed_ip)) {
                 App::url()->registerDefault(function (?string $args): void {
                     App::url()->type = 'default';

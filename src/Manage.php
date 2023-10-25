@@ -48,11 +48,6 @@ class Manage extends Process
             return false;
         }
 
-        // nullsafe PHP < 8.0
-        if (!App::blog()->isDefined()) {
-            return false;
-        }
-
         $s = My::settings();
 
         if (!empty($_POST['saveconfig'])) {
@@ -90,11 +85,6 @@ class Manage extends Process
     public static function render(): void
     {
         if (!self::status()) {
-            return;
-        }
-
-        // nullsafe PHP < 8.0
-        if (!App::blog()->isDefined()) {
             return;
         }
 
