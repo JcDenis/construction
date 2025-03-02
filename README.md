@@ -4,7 +4,7 @@
 ![Date](https://img.shields.io/github/release-date/jcdenis/construction?color=red)
 [![Dotclear](https://img.shields.io/badge/dotclear-v2.33-137bbb.svg)](https://fr.dotclear.org/download)
 [![Dotaddict](https://img.shields.io/badge/dotaddict-official-9ac123.svg)](https://plugins.dotaddict.org/dc2/details/construction)
-[![License](https://img.shields.io/github/license/jcdenis/construction?color=white)](https://github.com/JcDenis/construction/src/branch/master/LICENSE)
+[![License](https://img.shields.io/github/license/jcdenis/construction?color=white)](https://github.com/JcDenis/construction/blob/master/LICENSE)
 
 ## ABOUT
 
@@ -27,7 +27,7 @@ You can activate and setup _construction_ from sidebar menu "Construction".
 
 ## LINKS
 
-* [License](https://github.com/JcDenis/construction/src/branch/master/LICENSE)
+* [License](https://github.com/JcDenis/construction/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/construction/releases) (or on [Dotaddict](https://plugins.dotaddict.org/dc2/details/construction))
 * [Sources & contributions](https://github.com/JcDenis/construction)
 * [Issues & security](https://github.com/JcDenis/construction/issues)
