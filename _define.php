@@ -18,9 +18,9 @@ $this->registerModule(
     'Construction',
     'Place your blog maintenance',
     'Osku and contributors',
-    '1.9.3',
+    '1.10',
     [
-        'requires'    => [['core', '2.28']],
+        'requires'    => [['core', '2.36']],
         'permissions' => 'My',
         'priority'    => 2000,
         'type'        => 'plugin',
