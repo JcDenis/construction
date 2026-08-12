@@ -22,7 +22,7 @@ $this->registerModule(
     'Construction',
     'Place your blog maintenance',
     'Osku and contributors',
-    '1.10',
+    '1.11',
     [
         'requires'    => [['core', '2.39']],
         'permissions' => 'My',
