@@ -93,7 +93,7 @@ class Manage
         }
 
         $s       = My::settings();
-        $editor  = App::auth()->getOption('editor');
+        $editor  = App::auth()->prefs()->get('interface')->get('editor');
         $editor  = is_array($editor) && isset($editor['xhtml']) && is_string($editor['xhtml']) ? $editor['xhtml'] : '';
         $ips     = json_decode($s->getStr('allowed_ip', false), true);
         $ips     = is_array($ips) ? array_filter($ips, is_string(...)) : [];
