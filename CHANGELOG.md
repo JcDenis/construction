@@ -1,4 +1,9 @@
-construction 1.12 - 2026.11.04
+construction 2.13 - 2026.11.05
+===========================================================
+* Update release workflow
+* Fix version number (2.12 was released instead of 1.12)
+
+construction 2.12 - 2026.11.04
 ===========================================================
 * Fix deprecated user option (editor)
 
