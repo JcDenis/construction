@@ -38,5 +38,6 @@ You can activate and setup _construction_ from sidebar menu "Construction".
 * Osku (author)
 * Pierre Van Glabeke
 * Jean-Christian Denis (latest)
+* Claude (AI assistant by Anthropic)
 
 You are welcome to contribute to this code.
