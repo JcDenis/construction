@@ -53,11 +53,14 @@ class Frontend
                 $extra_urls = [];
             }
             if (!in_array(Http::realIP(), $all_allowed_ip)) {
-                App::url()->registerDefault(function (?string $args): void {
-                    App::url()->setType('default');
+                // The home page uses the default handler, allowed with the URL type "default"
+                if (!in_array('default', $extra_urls)) {
+                    App::url()->registerDefault(function (?string $args): void {
+                        App::url()->setType('default');
 
-                    throw new Exception('Blog under construction', 503);
-                });
+                        throw new Exception('Blog under construction', 503);
+                    });
+                }
                 App::url()->registerError(function (?string $args, ?string $type, Exception $e): void {
                     header('Content-Type: text/html; charset=UTF-8');
                     Http::head(503, 'Service Unavailable');
