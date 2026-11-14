@@ -1,3 +1,10 @@
+construction 2.14 - 2026.11.14
+===========================================================
+* Add Claude to contributors
+* [new] Allow the home page with the extra URL type "default"
+* [docs] Add a user guide in French, with screenshots
+* [docs] Add admin help in English and French
+
 construction 2.13 - 2026.11.05
 ===========================================================
 * Update release workflow
