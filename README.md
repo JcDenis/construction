@@ -12,6 +12,8 @@ _construction_ is a plugin for the open-source web publishing software called [D
 
 > Put your blog on construction mode with a custom message on frontend. Blog can be accessible to defined IP addresses.
 
+A [user guide in French](https://github.com/JcDenis/construction/blob/master/docs/fr/utilisation.md) is available.
+
 ## REQUIREMENTS
 
 * Dotclear 2.39
@@ -27,6 +29,7 @@ You can activate and setup _construction_ from sidebar menu "Construction".
 
 ## LINKS
 
+* [User guide (in French)](https://github.com/JcDenis/construction/blob/master/docs/fr/utilisation.md)
 * [License](https://github.com/JcDenis/construction/blob/master/LICENSE)
 * [Packages & details](https://github.com/JcDenis/construction/releases) (or on [Repository](https://dotclear.org/plugin/detail/construction))
 * [Sources & contributions](https://github.com/JcDenis/construction)
