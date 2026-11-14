@@ -7,7 +7,7 @@
     <desc>Place your blog maintenance</desc>
     <file>https://github.com/JcDenis/construction/releases/download/v2.13/plugin-construction.zip</file>
     <da:dcmin>2.39</da:dcmin>
-    <da:details>https://github.com/JcDenis/construction/src/branch/master/README.md</da:details>
+    <da:details>https://github.com/JcDenis/construction/blob/master/README.md</da:details>
     <da:support>https://github.com/JcDenis/construction/issues</da:support>
   </module>
 </modules>
